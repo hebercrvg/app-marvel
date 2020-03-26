@@ -20,7 +20,8 @@ export default class Main extends Component {
       loading: false,
       refreshing: false,
       page: 1,
-      heroes: []
+      heroes: [],
+      name: ""
     };
   }
 
@@ -28,12 +29,19 @@ export default class Main extends Component {
     await this.getHeroes();
   }
 
-  getHeroes = async name => {
-    const { page } = this.state;
+  getHeroes = async () => {
+    const { page, name } = this.state;
 
     if (name) {
+      this.setState({
+        page: 1
+      });
+      const res = await getHeroes({ name, limit: page * 20 });
+      this.setState({
+        heroes: res.data.results
+      });
     } else {
-      const res = await getHeroes(page * 20);
+      const res = await getHeroes({ limit: page * 20 });
       this.setState({
         heroes: res.data.results
       });
@@ -52,9 +60,10 @@ export default class Main extends Component {
     this.getHeroes();
   };
 
-  handleNavigate = (screen, data) => {
+  handleNavigate = (screen, data) =>
     this.props.navigation.navigate(screen, data);
-  };
+
+  handleChangeName = name => this.setState({ name });
 
   renderHeroes = item => {
     return (
@@ -70,16 +79,25 @@ export default class Main extends Component {
       </HeroButton>
     );
   };
+
+  handleGetHeroes = async () => {
+    this.setState({
+      loading: true
+    });
+    await this.getHeroes();
+    this.setState({ loading: false });
+  };
   render() {
-    const { loading, heroes, refreshing } = this.state;
+    const { loading, heroes, name, refreshing } = this.state;
     return (
       <Container>
         <Form>
-          <Input placeholder="Digite um herói..." />
-          <SubmitButton
-            loading={loading}
-            onPress={() => this.setState({ loading: true })}
+          <Input
+            placeholder="Type a hero name..."
+            value={name}
+            onChangeText={this.handleChangeName}
           />
+          <SubmitButton loading={loading} onPress={this.handleGetHeroes} />
         </Form>
         <FlatList
           showsVerticalScrollIndicator={false}
