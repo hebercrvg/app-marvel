@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { FlatList, ActivityIndicator } from "react-native";
+import { FlatList } from "react-native";
 
 import {
   Container,
@@ -62,6 +62,19 @@ export default class Hero extends Component {
     this.getComics();
   };
 
+  renderComics = ({ item }) => (
+    <Comic onPress={() => this.handleNavigate("Comic", { comic: item })}>
+      <ComicInfo>
+        <ComicImage
+          source={{
+            uri: `${item.thumbnail.path}.${item.thumbnail.extension}`
+          }}
+        />
+        <ComicName>{item.title}</ComicName>
+      </ComicInfo>
+    </Comic>
+  );
+
   render() {
     const { hero, comics, loading, refreshing } = this.state;
 
@@ -97,20 +110,7 @@ export default class Hero extends Component {
             refreshing={false} // Variável que armazena um estado true/false que representa se a lista está atualizando
             data={comics}
             keyExtractor={item => String(item.id)}
-            renderItem={({ item }) => (
-              <Comic
-                onPress={() => this.handleNavigate("Comic", { comic: item })}
-              >
-                <ComicInfo>
-                  <ComicImage
-                    source={{
-                      uri: `${item.thumbnail.path}.${item.thumbnail.extension}`
-                    }}
-                  />
-                  <ComicName>{item.title}</ComicName>
-                </ComicInfo>
-              </Comic>
-            )}
+            renderItem={this.renderComics}
           />
         )}
       </Container>

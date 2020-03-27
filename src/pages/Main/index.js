@@ -65,7 +65,7 @@ export default class Main extends Component {
 
   handleChangeName = name => this.setState({ name });
 
-  renderHeroes = item => {
+  renderHeroes = ({ item }) => {
     return (
       <HeroButton
         onPress={() => {
@@ -106,7 +106,7 @@ export default class Main extends Component {
           refreshing={refreshing}
           onRefresh={this.getHeroes}
           data={heroes}
-          renderItem={({ item }) => this.renderHeroes(item)}
+          renderItem={this.renderHeroes}
           keyExtractor={item => String(item.id)}
           ItemSeparatorComponent={() => <HeroSeparator />}
         />
